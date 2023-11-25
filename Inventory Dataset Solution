@@ -1,0 +1,31 @@
+# Importing the Libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Loading the Datasets
+df=pd.read_excel("C:/Users/ishaan khurana/Downloads/Inventory Dataset (1).xlsx")
+df_new=pd.read_excel("C:/Users/ishaan khurana/Downloads/New Inventory (1).xlsx")
+df
+df_new
+
+# Converting the required datatypes to Datetime format
+df['Date'] = pd.to_datetime(df['Date'])
+print(df)
+df_new['Inventory Receive'] = pd.to_datetime(df_new['Inventory Receive'])
+print(df_new)
+
+# Merging the Datasets based on "Item Numbers"
+merged_df=pd.merge(df,df_new,on='Item Number')
+merged_df
+
+# Creating the Pivot Table
+pivot_table=pd.pivot_table(merged_df,values='Total Item Qty',index='Item Number', columns='Inventory Receive',aggfunc='sum', fill_value=0)
+pivot_table
+
+# Creating the monthly Bar chart
+monthly_inventory = merged_df.groupby(merged_df['Inventory Receive'].dt.to_period("M"))['Total Item Qty'].sum()
+monthly_inventory.plot(kind='bar', color='blue')
+plt.xlabel('Month')
+plt.ylabel('Total Inventory')
+plt.title('Total Monthly Inventory Levels')
+plt.show()
